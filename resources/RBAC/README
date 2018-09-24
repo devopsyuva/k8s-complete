@@ -1,0 +1,22 @@
+Creating user certificates:
+1) Create provate key using OpenSSL command:
+	#openssl genrsa -out sudhams.key 2048
+2) Create CSR(Certificate Signing Request):
+	#openssl req -new -key sudhams.key -out sudhams.csr -subj "/CN=sudhams/O=devs" #CN should be user and O should be group
+3) Send the CSR to the administrator or CA(Certificate Authority) team:
+	#openssl x509 -req -in sudham.csr -CA CA_LOCATION/ca.crt -CAkey CA_LOCATION/ca.key -CAcreateserial -out sudhams.crt -days 500
+
+	Note: If you want to see context of the certificates:
+	#openssl x509 -in sudhams.crt -text -noout
+
+4) To add in your local machine the new configuration:
+	Add the new cluster to kubectl:
+	#kubectl config set-cluster sandbox --certificate-authority=ca.pem --embed-certs=true --server=https://192.168.3.144:6443
+5) Now, add new credentials to kubectl:
+	#kubectl config set-credentials sudhams --client-cerficate=sudhams.crt --client-key=sudhams.key --embed-certs=true
+6) Add new context to kubectl:
+	#kubectl config set-context sandbox-sudhams --cluster=sanbox --user=sudhams
+7) To test the user context, switch to the user context:
+	#kubectl config use-context sandbox-sudhams
+
+Reference: https://www.youtube.com/watch?time_continue=3457&v=CnHTCTP8d48
